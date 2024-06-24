@@ -1,4 +1,4 @@
-# todo_guide
+# Mobile ToDo
 
 A cross-platform ToDo application
 
