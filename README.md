@@ -1,4 +1,4 @@
-# Mobile ToDo
+# Checklist
 
-A cross-platform ToDo application
+| A local-first cross-platform ToDo application
 
