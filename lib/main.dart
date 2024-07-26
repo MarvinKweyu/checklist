@@ -24,16 +24,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'ToDo Guide',
+        title: 'Checklist',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: const ColorScheme.light(
             surface: Colors.white,
             onSurface: Colors.black,
-            primary: Colors.yellowAccent,
+            primary: Colors.green,
             onPrimary: Colors.black,
-            secondary: Colors.lightGreen,
-            onSecondary: Colors.white,
+            secondary: Color.fromARGB(255, 191, 165, 117),
+            onSecondary: Color.fromARGB(255, 191, 165, 117),
           ),
           useMaterial3: true,
         ),

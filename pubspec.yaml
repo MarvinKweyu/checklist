@@ -1,5 +1,5 @@
 name: todo_guide
-description: "A cross-platform ToDo application"
+description: "A cross-platform checklist application"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -42,6 +42,7 @@ dependencies:
   equatable: ^2.0.5
   bloc: ^8.1.4
   meta: ^1.12.0
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -66,9 +67,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/images/checklist.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -95,3 +95,20 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/checklist.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/images/checklist.png"
+    # background_color: "#hexcode"
+    # theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/images/checklist.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/checklist.png"

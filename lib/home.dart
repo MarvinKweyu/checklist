@@ -39,9 +39,10 @@ class _HomeState extends State<Home> {
           elevation: 0,
           centerTitle: true,
           title: const Text(
-            "ToDo Project",
+            "My Checklist",
             style: TextStyle(
               fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
           )),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -55,7 +56,7 @@ class _HomeState extends State<Home> {
                 TextEditingController controller1 = TextEditingController();
                 TextEditingController controller2 = TextEditingController();
                 return AlertDialog(
-                  title: const Text('Add Todo'),
+                  title: const Text('Add item'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
