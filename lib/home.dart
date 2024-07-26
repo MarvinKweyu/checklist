@@ -176,12 +176,20 @@ class _HomeState extends State<Home> {
                             ],
                           ),
                           child: ListTile(
-                              title: Text(state.todos[i].title),
-                              subtitle: Text(state.todos[i].description),
+                              title: Text(
+                                state.todos[i].title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(state.todos[i].description,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  )),
                               trailing: Checkbox(
                                   value: state.todos[i].isDone,
-                                  activeColor:
-                                      Theme.of(context).colorScheme.secondary,
+                                  activeColor: Colors.white,
                                   onChanged: (value) {
                                     changeTodo(i);
                                   }))),
