@@ -5,6 +5,8 @@ import 'package:checklist/features/checklist/domain/entities/todo_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 
+import 'dart:developer' as devtools show log;
+
 part 'checklist_event.dart';
 part 'checklist_state.dart';
 
@@ -32,6 +34,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
       // get the items to the right
       var res = allItems.getOrElse(() => []);
+      print(allItems);
 
       emit(state.copyWith(todos: res, status: ChecklistStatus.success));
     } catch (e) {

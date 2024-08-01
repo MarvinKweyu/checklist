@@ -44,6 +44,7 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
           await database.select(database.todoItems).get();
       return allItems
           .map((e) => TodoModel(
+                id: e.id,
                 title: e.title,
                 description: e.description,
                 isDone: e.isDone,
@@ -64,7 +65,6 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
   Future<int> updateTodo(int id, TodoModel checklist) async {
     return (database.update(database.todoItems)..where((t) => t.id.equals(id)))
         .write(TodoItemsCompanion(
-      id: Value(id),
       title: Value(checklist.title),
       description: Value(checklist.description),
       isDone: Value(checklist.isDone),
