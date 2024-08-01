@@ -8,9 +8,7 @@ import 'package:checklist/features/checklist/domain/repositories/todo_repository
 import 'package:dartz/dartz.dart';
 
 class TodoRepositoryImpl implements TodoRepository {
-  final ChecklistLocalSource localDb;
-
-  TodoRepositoryImpl({required this.localDb});
+  final ChecklistLocalSource localDb = ChecklistLocalSourceImpl();
 
   @override
   Future<void> addNewTodo(TodoEntity todo) async {

@@ -1,3 +1,4 @@
+import 'package:checklist/features/checklist/presentation/bloc/checklist_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:checklist/features/checklist/presentation/pages/home.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:checklist/features/todo/todo_bloc/todo_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: BlocProvider<TodoBloc>(
-          create: (context) => TodoBloc()..add(TodoStarted()),
+        home: BlocProvider<ChecklistBloc>(
+          create: (context) => ChecklistBloc()..add(ChecklistStarted()),
           child: const Home(),
         ));
   }
