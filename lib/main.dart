@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:todo_guide/home.dart';
+import 'package:checklist/home.dart';
 
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:todo_guide/todo_bloc/todo_bloc.dart';
+import 'package:checklist/todo_bloc/todo_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

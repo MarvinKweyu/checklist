@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:todo_guide/data/todo.dart';
+import 'package:checklist/data/todo.dart';
 import 'dart:developer' as devtools show log;
 
-import 'package:todo_guide/todo_bloc/todo_bloc.dart';
+import 'package:checklist/todo_bloc/todo_bloc.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

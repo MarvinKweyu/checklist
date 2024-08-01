@@ -1,4 +1,4 @@
-name: todo_guide
+name: checklist
 description: "A cross-platform checklist application"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -43,6 +43,8 @@ dependencies:
   bloc: ^8.1.4
   meta: ^1.12.0
   flutter_launcher_icons: ^0.13.1
+  drift: ^2.19.1+1
+  drift_flutter: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +56,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  drift_dev: ^2.19.1
+  build_runner: ^2.4.11
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
