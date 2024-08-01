@@ -1,6 +1,6 @@
 {
-    "name": "todo_guide",
-    "short_name": "todo_guide",
+    "name": "checklist",
+    "short_name": "checklist",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
