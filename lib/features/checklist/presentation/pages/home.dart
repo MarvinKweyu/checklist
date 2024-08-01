@@ -1,11 +1,10 @@
+import 'package:checklist/features/checklist/domain/entities/todo_entity.dart';
+import 'package:checklist/features/checklist/presentation/bloc/checklist_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:checklist/features/todo/data/todo.dart';
 import 'dart:developer' as devtools show log;
-
-import 'package:checklist/features/todo/todo_bloc/todo_bloc.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,20 +14,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  addTodo(Todo todo) {
+  addTodo(TodoEntity todo) {
     // either way works
-    // BlocProvider.of<TodoBloc>(context).add(AddTodo(todo));
-    context.read<TodoBloc>().add(AddTodo(todo));
+    // BlocProvider.of<ChecklistBloc>(context).add(AddTodo(todo));
+    context.read<ChecklistBloc>().add(AddTodo(todo));
   }
 
-  removeTodo(Todo todo) {
-    context.read<TodoBloc>().add(
+  removeTodo(TodoEntity todo) {
+    context.read<ChecklistBloc>().add(
           RemoveTodo(todo),
         );
   }
 
-  changeTodo(int index) {
-    context.read<TodoBloc>().add(AlterTodo(index));
+  changeTodo(int id, TodoEntity todo) {
+    context.read<ChecklistBloc>().add(UpdateTodo(id, todo));
   }
 
   @override
@@ -113,9 +112,10 @@ class _HomeState extends State<Home> {
                       child: TextButton(
                           onPressed: () {
                             addTodo(
-                              Todo(
+                              TodoEntity(
                                 title: controller1.text,
                                 description: controller2.text,
+                                isDone: false,
                               ),
                             );
                             controller1.text = '';
@@ -148,9 +148,9 @@ class _HomeState extends State<Home> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: BlocBuilder<TodoBloc, TodoState>(
+        child: BlocBuilder<ChecklistBloc, ChecklistState>(
           builder: (context, state) {
-            if (state.status == TodoStatus.success) {
+            if (state.status == ChecklistStatus.success) {
               return ListView.builder(
                   itemCount: state.todos.length,
                   itemBuilder: (context, int i) {
@@ -191,15 +191,16 @@ class _HomeState extends State<Home> {
                                   value: state.todos[i].isDone,
                                   activeColor: Colors.white,
                                   onChanged: (value) {
-                                    changeTodo(i);
+                                    changeTodo(
+                                        state.todos[i].id!, state.todos[i]);
                                   }))),
                     );
                   });
-            } else if (state.status == TodoStatus.loading) {
+            } else if (state.status == ChecklistStatus.loading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (state.status == TodoStatus.error) {
+            } else if (state.status == ChecklistStatus.error) {
               return const Center(
                 child: Text('Something happened'),
               );

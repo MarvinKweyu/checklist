@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:checklist/features/todo/home.dart';
+import 'package:checklist/features/checklist/presentation/pages/home.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -13,7 +13,7 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: kIsWeb
         ? HydratedStorage.webStorageDirectory
-        : await getTemporaryDirectory(),
+        : await getApplicationDocumentsDirectory(),
   );
   runApp(const MyApp());
 }
