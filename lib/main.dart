@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
         title: 'Checklist',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: const ColorScheme.light(
-            surface: Colors.white,
+          colorScheme: const ColorScheme.dark(
+            surface: Color(0xff121212),
             onSurface: Colors.black,
             primary: Colors.green,
             onPrimary: Colors.black,

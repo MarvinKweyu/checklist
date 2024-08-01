@@ -27,6 +27,7 @@ class _HomeState extends State<Home> {
   }
 
   changeTodo(int id, TodoEntity todo) {
+    // mark this todo as done
     context.read<ChecklistBloc>().add(UpdateTodo(id, todo));
   }
 
