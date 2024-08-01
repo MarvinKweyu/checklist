@@ -1,0 +1,2 @@
+class DatabaseException implements Exception {}
+

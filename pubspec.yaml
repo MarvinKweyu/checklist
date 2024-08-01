@@ -45,6 +45,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   drift: ^2.19.1+1
   drift_flutter: ^0.1.0
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
