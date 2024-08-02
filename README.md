@@ -11,14 +11,14 @@
 
 ## Local installation
 
-Get the latest version of checklist from the releases page. This includes installables for:
+Get the latest version of checklist from the [releases page](https://github.com/MarvinKweyu/checklist/releases). This includes installables for:
 
 - Android
-- Windows 
+- Windows (In progress)
 
 ## Development
 
-Local development
+For local development, clone the repo, install the dependencies and run the project for your environment
 
 ```
 flutter pub get
