@@ -1,5 +1,3 @@
-
-
 import 'package:checklist/core/error/failures.dart';
 import 'package:checklist/features/checklist/data/datasources/checklist_local_source.dart';
 import 'package:checklist/features/checklist/data/models/todo_model.dart';
@@ -7,17 +5,19 @@ import 'package:checklist/features/checklist/domain/entities/todo_entity.dart';
 import 'package:checklist/features/checklist/domain/repositories/todo_repository.dart';
 import 'package:dartz/dartz.dart';
 
+import 'dart:developer' as devtools show log;
+
 class TodoRepositoryImpl implements TodoRepository {
   final ChecklistLocalSource localDb = ChecklistLocalSourceImpl();
 
   @override
-  Future<void> addNewTodo(TodoEntity todo) async {
+  Future<int> addNewTodo(TodoEntity todo) async {
     final todoModel = TodoModel(
       title: todo.title,
       description: todo.description,
       isDone: todo.isDone,
     );
-    await localDb.addNewTodo(todoModel);
+    return await localDb.addNewTodo(todoModel);
   }
 
   @override
@@ -51,16 +51,17 @@ class TodoRepositoryImpl implements TodoRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateTodo(
+  Future<Either<Failure, int>> updateTodo(
       {required int id, required TodoEntity todo}) async {
     final todoModel = TodoModel(
       title: todo.title,
       description: todo.description,
       isDone: todo.isDone,
     );
+    devtools.log("Model created");
+
     try {
-      await localDb.updateTodo(id, todoModel);
-      return const Right(null);
+      return Right(await localDb.updateTodo(id, todoModel));
     } catch (e) {
       return Left(DatabaseFailure());
     }

@@ -1,10 +1,11 @@
 import 'package:checklist/core/error/exception.dart';
 import 'package:checklist/features/checklist/data/datasources/database.dart';
 import 'package:checklist/features/checklist/data/models/todo_model.dart';
+import 'package:dartz/dartz.dart';
 import 'package:drift/drift.dart';
 
 abstract class ChecklistLocalSource {
-  Future<void> addNewTodo(TodoModel checklist);
+  Future<int> addNewTodo(TodoModel checklist);
   Future<TodoModel> getTodo(int id);
   Future<List<TodoModel>> getTodos();
   Future<int> removeTodo(int id);
@@ -15,9 +16,10 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
   final database = AppDatabase();
 
   @override
-  Future<void> addNewTodo(TodoModel todo) async {
-    await database.into(database.todoItems).insert(TodoItemsCompanion.insert(
-        title: todo.title, description: todo.description));
+  Future<int> addNewTodo(TodoModel todo) async {
+    return await database.into(database.todoItems).insert(
+        TodoItemsCompanion.insert(
+            title: todo.title, description: todo.description));
   }
 
   @override
@@ -40,8 +42,10 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
   @override
   Future<List<TodoModel>> getTodos() async {
     try {
-      final List<TodoItem> allItems =
-          await database.select(database.todoItems).get();
+      final List<TodoItem> allItems = await (database.select(database.todoItems)
+            ..orderBy([(t) => OrderingTerm.desc(t.id)]))
+          .get();
+
       return allItems
           .map((e) => TodoModel(
                 id: e.id,

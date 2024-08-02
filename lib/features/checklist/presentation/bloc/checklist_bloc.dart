@@ -23,6 +23,7 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   TodoRepositoryImpl checklistRepo = TodoRepositoryImpl();
 
   void _onStarted(ChecklistStarted event, Emitter<ChecklistState> emit) async {
+    // _fetchAll(emit);
     emit(state.copyWith(status: ChecklistStatus.loading));
     try {
       Either<Failure, List<TodoEntity>> allItems =
@@ -34,7 +35,6 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
       // get the items to the right
       var res = allItems.getOrElse(() => []);
-      print(allItems);
 
       emit(state.copyWith(todos: res, status: ChecklistStatus.success));
     } catch (e) {
@@ -45,10 +45,13 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   void _onAddTodo(AddTodo event, Emitter<ChecklistState> emit) async {
     emit(state.copyWith(status: ChecklistStatus.loading));
     try {
-      await checklistRepo.addNewTodo(event.todo);
+      int todoId = await checklistRepo.addNewTodo(event.todo);
+
       List<TodoEntity> temp = [];
       temp.addAll(state.todos);
-      temp.insert(0, event.todo);
+      final TodoEntity updatedTodo = event.todo.copyWith(id: todoId);
+
+      temp.insert(0, updatedTodo);
       emit(state.copyWith(todos: temp, status: ChecklistStatus.success));
     } catch (e) {
       emit(state.copyWith(status: ChecklistStatus.error));
@@ -56,9 +59,21 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   }
 
   void _onFetchTodos(FetchTodos event, Emitter<ChecklistState> emit) async {
+    // _fetchAll(emit);
+
     emit(state.copyWith(status: ChecklistStatus.loading));
     try {
-      emit(state.copyWith(todos: state.todos, status: ChecklistStatus.success));
+      Either<Failure, List<TodoEntity>> allItems =
+          await checklistRepo.getTodos();
+      if (allItems.isLeft()) {
+        emit(state.copyWith(status: ChecklistStatus.error));
+        return;
+      }
+
+      // get the items to the right
+      var res = allItems.getOrElse(() => []);
+
+      emit(state.copyWith(todos: res, status: ChecklistStatus.success));
     } catch (e) {
       emit(state.copyWith(status: ChecklistStatus.error));
     }
@@ -88,16 +103,34 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
 
   void _onUpdateTodo(UpdateTodo event, Emitter<ChecklistState> emit) async {
     emit(state.copyWith(status: ChecklistStatus.loading));
+    devtools.log(event.updatedTodo.toString());
+
     try {
-      await checklistRepo.updateTodo(id: event.id, todo: event.updatedTodo);
+      var res =
+          await checklistRepo.updateTodo(id: event.id, todo: event.updatedTodo);
+      if (res.isLeft()) {
+        emit(state.copyWith(status: ChecklistStatus.error));
+        return;
+      }
+
       final index = state.todos.indexWhere((element) => element.id == event.id);
+      // extra check that it already existed
       if (index == -1) {
         emit(state.copyWith(status: ChecklistStatus.error));
         return;
       }
-      state.todos[index] = event.updatedTodo;
-      emit(state.copyWith(todos: state.todos, status: ChecklistStatus.success));
+      devtools.log("Updating an item..");
+      devtools.log(event.updatedTodo.runtimeType.toString());
+      devtools.log("Updating on");
+      devtools.log(state.todos.runtimeType.toString());
+      List<TodoEntity> updatedTodos = List.from(state.todos);
+      updatedTodos[index] = event.updatedTodo;
+
+      // state.todos[index] = event.updatedTodo;
+      emit(
+          state.copyWith(todos: updatedTodos, status: ChecklistStatus.success));
     } catch (e) {
+      devtools.log(e.toString());
       emit(state.copyWith(status: ChecklistStatus.error));
     }
   }

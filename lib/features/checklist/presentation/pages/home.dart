@@ -49,7 +49,6 @@ class _HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          devtools.log('Show Add Page');
           showDialog(
               context: context,
               builder: (context) {
@@ -153,8 +152,9 @@ class _HomeState extends State<Home> {
           builder: (context, state) {
             if (state.status == ChecklistStatus.success) {
               return ListView.builder(
-                  itemCount: state.todos.length,
+                  itemCount: state.incompleteTodos.length,
                   itemBuilder: (context, int i) {
+                    TodoEntity singleItem = state.incompleteTodos[i];
                     return Card(
                       color: Theme.of(context).colorScheme.primary,
                       elevation: 1,
@@ -167,7 +167,7 @@ class _HomeState extends State<Home> {
                             children: [
                               SlidableAction(
                                 onPressed: (_) {
-                                  removeTodo(state.todos[i]);
+                                  removeTodo(singleItem);
                                 },
                                 backgroundColor: const Color(0xFFFE4A49),
                                 foregroundColor: Colors.white,
@@ -178,22 +178,24 @@ class _HomeState extends State<Home> {
                           ),
                           child: ListTile(
                               title: Text(
-                                state.todos[i].title,
+                                singleItem.title,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              subtitle: Text(state.todos[i].description,
+                              subtitle: Text(singleItem.description,
                                   style: const TextStyle(
                                     color: Colors.white,
                                   )),
                               trailing: Checkbox(
-                                  value: state.todos[i].isDone,
+                                  value: singleItem.isDone,
                                   activeColor: Colors.white,
                                   onChanged: (value) {
                                     changeTodo(
-                                        state.todos[i].id!, state.todos[i]);
+                                      singleItem.id!,
+                                      singleItem.copyWith(isDone: true),
+                                    );
                                   }))),
                     );
                   });
@@ -201,13 +203,9 @@ class _HomeState extends State<Home> {
               return const Center(
                 child: CircularProgressIndicator(),
               );
-            } else if (state.status == ChecklistStatus.error) {
-              return const Center(
-                child: Text('Something happened'),
-              );
             }
             return const Center(
-              child: Text('Hello World'),
+              child: Text('Something happened'),
             );
           },
         ),
