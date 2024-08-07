@@ -66,7 +66,9 @@ class _HomeState extends State<Home> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: const Text('Add item'),
+                  title: const Text(
+                    'Add an item',
+                  ),
                   content: Form(
                     key: _formKey,
                     child: Column(
@@ -76,7 +78,7 @@ class _HomeState extends State<Home> {
                           controller: controller1,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a title';
+                              return 'Please enter a title for your task';
                             }
                             if (value.length > 50) {
                               return 'Too long!';
@@ -85,7 +87,7 @@ class _HomeState extends State<Home> {
                           },
                           cursorColor: Theme.of(context).colorScheme.secondary,
                           decoration: InputDecoration(
-                            hintText: 'Task Title...',
+                            hintText: 'Your task...',
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(
@@ -103,35 +105,7 @@ class _HomeState extends State<Home> {
                             // });
                           },
                         ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          controller: controller2,
-                          validator: (value) {
-                            if (value != null && value.length > 50) {
-                              return 'Too long!';
-                            }
-                            return null;
-                          },
-                          cursorColor: Theme.of(context).colorScheme.secondary,
-                          decoration: InputDecoration(
-                            hintText: 'Task Description...',
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Colors.grey),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            // setState(() {
-                            //   description = value;
-                            // });
-                          },
-                        ),
+                        const SizedBox(height: 5),
                       ],
                     ),
                   ),
@@ -188,8 +162,6 @@ class _HomeState extends State<Home> {
                     return GestureDetector(
                       onTap: () {
                         context.go('/info/${singleItem.id}');
-                        // context.goNamed('info',
-                        //     pathParameters: {'id': singleItem.id.toString()});
                       },
                       child: Card(
                         color: Theme.of(context).colorScheme.primary,
