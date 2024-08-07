@@ -6,7 +6,7 @@ part 'database.g.dart';
 class TodoItems extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text().withLength(min: 1, max: 50)();
-  TextColumn get description => text().withLength(min: 1, max: 50)();
+  TextColumn get note => text().named('body')();
   BoolColumn get isDone => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt =>
       dateTime().withDefault(Constant(DateTime.now()))();

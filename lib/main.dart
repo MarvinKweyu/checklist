@@ -1,3 +1,4 @@
+import 'package:checklist/core/routes.dart';
 import 'package:checklist/features/checklist/presentation/bloc/checklist_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -23,23 +24,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Checklist',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: const ColorScheme.light(
-            surface: Colors.white,
-            onSurface: Colors.black,
-            primary: Colors.green,
-            onPrimary: Colors.black,
-            secondary: Color.fromARGB(255, 191, 165, 117),
-            onSecondary: Color.fromARGB(255, 191, 165, 117),
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<ChecklistBloc>(
+            create: (context) => ChecklistBloc()..add(ChecklistStarted()),
+          )
+        ],
+        child: MaterialApp.router(
+          title: 'Checklist',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: const ColorScheme.light(
+              surface: Colors.white,
+              onSurface: Colors.black,
+              primary: Colors.green,
+              onPrimary: Colors.black,
+              secondary: Color.fromARGB(255, 191, 165, 117),
+              onSecondary: Color.fromARGB(255, 191, 165, 117),
+            ),
+            useMaterial3: true,
           ),
-          useMaterial3: true,
-        ),
-        home: BlocProvider<ChecklistBloc>(
-          create: (context) => ChecklistBloc()..add(ChecklistStarted()),
-          child: const Home(),
+          routerConfig: routes,
         ));
   }
 }
