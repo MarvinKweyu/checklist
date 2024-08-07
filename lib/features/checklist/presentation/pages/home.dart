@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:go_router/go_router.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -14,6 +16,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController controller1 = TextEditingController();
+  TextEditingController controller2 = TextEditingController();
+
   addTodo(TodoEntity todo) {
     // either way works
     // BlocProvider.of<ChecklistBloc>(context).add(AddTodo(todo));
@@ -29,6 +35,13 @@ class _HomeState extends State<Home> {
   changeTodo(int id, TodoEntity todo) {
     // mark this todo as done
     context.read<ChecklistBloc>().add(UpdateTodo(id, todo));
+  }
+
+  @override
+  void dispose() {
+    controller1.dispose();
+    controller2.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,75 +65,93 @@ class _HomeState extends State<Home> {
           showDialog(
               context: context,
               builder: (context) {
-                TextEditingController controller1 = TextEditingController();
-                TextEditingController controller2 = TextEditingController();
                 return AlertDialog(
                   title: const Text('Add item'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: controller1,
-                        cursorColor: Theme.of(context).colorScheme.secondary,
-                        decoration: InputDecoration(
-                          hintText: 'Task Title...',
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.secondary,
+                  content: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: controller1,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            if (value.length > 50) {
+                              return 'Too long!';
+                            }
+                            return null;
+                          },
+                          cursorColor: Theme.of(context).colorScheme.secondary,
+                          decoration: InputDecoration(
+                            hintText: 'Task Title...',
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Colors.grey),
                             ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.grey),
-                          ),
+                          onChanged: (value) {
+                            // setState(() {
+                            //   title = value;
+                            // });
+                          },
                         ),
-                        onChanged: (value) {
-                          // setState(() {
-                          //   title = value;
-                          // });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: controller2,
-                        cursorColor: Theme.of(context).colorScheme.secondary,
-                        decoration: InputDecoration(
-                          hintText: 'Task Description...',
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.secondary,
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: controller2,
+                          validator: (value) {
+                            if (value != null && value.length > 50) {
+                              return 'Too long!';
+                            }
+                            return null;
+                          },
+                          cursorColor: Theme.of(context).colorScheme.secondary,
+                          decoration: InputDecoration(
+                            hintText: 'Task Description...',
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Colors.grey),
                             ),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(color: Colors.grey),
-                          ),
+                          onChanged: (value) {
+                            // setState(() {
+                            //   description = value;
+                            // });
+                          },
                         ),
-                        onChanged: (value) {
-                          // setState(() {
-                          //   description = value;
-                          // });
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   actions: [
                     Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: TextButton(
                           onPressed: () {
-                            addTodo(
-                              TodoEntity(
-                                title: controller1.text,
-                                description: controller2.text,
-                                isDone: false,
-                              ),
-                            );
-                            controller1.text = '';
-                            controller2.text = '';
-                            Navigator.pop(context);
+                            if (_formKey.currentState!.validate()) {
+                              addTodo(
+                                TodoEntity(
+                                  title: controller1.text,
+                                  description: controller2.text,
+                                  isDone: false,
+                                ),
+                              );
+                              controller1.text = '';
+                              controller2.text = '';
+                              Navigator.pop(context);
+                            }
                           },
                           style: TextButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -142,7 +173,6 @@ class _HomeState extends State<Home> {
                   ],
                 );
               });
-          // Navigator.pushNamed(context, '/add');
         },
         child: const Icon(CupertinoIcons.add),
       ),
@@ -155,48 +185,55 @@ class _HomeState extends State<Home> {
                   itemCount: state.incompleteTodos.length,
                   itemBuilder: (context, int i) {
                     TodoEntity singleItem = state.incompleteTodos[i];
-                    return Card(
-                      color: Theme.of(context).colorScheme.primary,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Slidable(
-                          key: const ValueKey(0),
-                          startActionPane: ActionPane(
-                            motion: const ScrollMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (_) {
-                                  removeTodo(singleItem);
-                                },
-                                backgroundColor: const Color(0xFFFE4A49),
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete,
-                                label: 'Delete',
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                              title: Text(
-                                singleItem.title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                    return GestureDetector(
+                      onTap: () {
+                        context.go('/info/${singleItem.id}');
+                        // context.goNamed('info',
+                        //     pathParameters: {'id': singleItem.id.toString()});
+                      },
+                      child: Card(
+                        color: Theme.of(context).colorScheme.primary,
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Slidable(
+                            key: const ValueKey(0),
+                            startActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              children: [
+                                SlidableAction(
+                                  onPressed: (_) {
+                                    removeTodo(singleItem);
+                                  },
+                                  backgroundColor: const Color(0xFFFE4A49),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
                                 ),
-                              ),
-                              subtitle: Text(singleItem.description,
+                              ],
+                            ),
+                            child: ListTile(
+                                title: Text(
+                                  singleItem.title,
                                   style: const TextStyle(
                                     color: Colors.white,
-                                  )),
-                              trailing: Checkbox(
-                                  value: singleItem.isDone,
-                                  activeColor: Colors.white,
-                                  onChanged: (value) {
-                                    changeTodo(
-                                      singleItem.id!,
-                                      singleItem.copyWith(isDone: true),
-                                    );
-                                  }))),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(singleItem.description ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    )),
+                                trailing: Checkbox(
+                                    value: singleItem.isDone,
+                                    activeColor: Colors.white,
+                                    onChanged: (value) {
+                                      changeTodo(
+                                        singleItem.id!,
+                                        singleItem.copyWith(isDone: true),
+                                      );
+                                    }))),
+                      ),
                     );
                   });
             } else if (state.status == ChecklistStatus.loading) {
