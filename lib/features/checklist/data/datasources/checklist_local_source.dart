@@ -1,7 +1,6 @@
 import 'package:checklist/core/error/exception.dart';
 import 'package:checklist/features/checklist/data/datasources/database.dart';
 import 'package:checklist/features/checklist/data/models/todo_model.dart';
-import 'package:dartz/dartz.dart';
 import 'package:drift/drift.dart';
 
 abstract class ChecklistLocalSource {
@@ -19,7 +18,7 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
   Future<int> addNewTodo(TodoModel todo) async {
     return await database.into(database.todoItems).insert(
         TodoItemsCompanion.insert(
-            title: todo.title, description: todo.description));
+            title: todo.title, note: todo.description ?? ''));
   }
 
   @override
@@ -31,7 +30,7 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
 
       return TodoModel(
         title: todoItem.title,
-        description: todoItem.description,
+        description: todoItem.note,
         isDone: todoItem.isDone,
       );
     } catch (e) {
@@ -50,7 +49,7 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
           .map((e) => TodoModel(
                 id: e.id,
                 title: e.title,
-                description: e.description,
+                description: e.note,
                 isDone: e.isDone,
               ))
           .toList();
@@ -70,7 +69,7 @@ class ChecklistLocalSourceImpl implements ChecklistLocalSource {
     return (database.update(database.todoItems)..where((t) => t.id.equals(id)))
         .write(TodoItemsCompanion(
       title: Value(checklist.title),
-      description: Value(checklist.description),
+      note: Value(checklist.description ?? ''),
       isDone: Value(checklist.isDone),
     ));
   }

@@ -6,7 +6,7 @@ class TodoModel extends TodoEntity {
   const TodoModel({
     super.id,
     required super.title,
-    required super.description,
+  super.description,
     required super.isDone,
   });
 

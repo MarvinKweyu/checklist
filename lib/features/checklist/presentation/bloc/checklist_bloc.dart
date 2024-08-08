@@ -93,8 +93,8 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
   void _onRemoveTodo(RemoveTodo event, Emitter<ChecklistState> emit) async {
     emit(state.copyWith(status: ChecklistStatus.loading));
     try {
-      await checklistRepo.removeTodo(id: event.todo.id!);
-      state.todos.remove(event.todo);
+      await checklistRepo.removeTodo(id: event.id);
+      state.todos.removeWhere((element) => element.id == event.id);
       emit(state.copyWith(todos: state.todos, status: ChecklistStatus.success));
     } catch (e) {
       emit(state.copyWith(status: ChecklistStatus.error));
@@ -119,10 +119,11 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
         emit(state.copyWith(status: ChecklistStatus.error));
         return;
       }
+      //! This is a bug.
       devtools.log("Updating an item..");
-      devtools.log(event.updatedTodo.runtimeType.toString());
+      devtools.log(event.updatedTodo.runtimeType.toString()); // entity
       devtools.log("Updating on");
-      devtools.log(state.todos.runtimeType.toString());
+      devtools.log(state.todos.runtimeType.toString()); // model
       List<TodoEntity> updatedTodos = List.from(state.todos);
       updatedTodos[index] = event.updatedTodo;
 

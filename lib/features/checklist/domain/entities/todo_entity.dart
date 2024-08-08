@@ -4,13 +4,13 @@ import 'package:equatable/equatable.dart';
 class TodoEntity extends Equatable {
   final int? id;
   final String title;
-  final String description;
+  final String? description;
   final bool isDone;
 
   const TodoEntity({
     this.id,
     required this.title,
-    required this.description,
+    this.description,
     required this.isDone,
   });
 

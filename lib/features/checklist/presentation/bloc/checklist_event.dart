@@ -44,15 +44,15 @@ class FetchTodosById extends ChecklistEvent {
 }
 
 class RemoveTodo extends ChecklistEvent {
-  final TodoEntity todo;
+  final int id;
 
-  const RemoveTodo(this.todo);
-
-  @override
-  List<Object> get props => [todo];
+  const RemoveTodo(this.id);
 
   @override
-  String toString() => 'RemoveTodo { todo: $todo }';
+  List<Object> get props => [id];
+
+  @override
+  String toString() => 'RemoveTodo { todo: $id }';
 }
 
 class UpdateTodo extends ChecklistEvent {
