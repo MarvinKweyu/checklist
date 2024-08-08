@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
 
   removeTodo(TodoEntity todo) {
     context.read<ChecklistBloc>().add(
-          RemoveTodo(todo),
+          RemoveTodo(todo.id!),
         );
   }
 

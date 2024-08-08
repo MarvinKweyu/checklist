@@ -2,7 +2,6 @@ import 'package:checklist/core/routes.dart';
 import 'package:checklist/features/checklist/presentation/bloc/checklist_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:checklist/features/checklist/presentation/pages/home.dart';
 
 import 'package:flutter/foundation.dart';
 
