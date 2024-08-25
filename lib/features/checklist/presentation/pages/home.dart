@@ -129,6 +129,8 @@ class _HomeState extends State<Home> {
                             }
                           },
                           style: TextButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
                                 color: Theme.of(context).colorScheme.secondary,
@@ -142,7 +144,7 @@ class _HomeState extends State<Home> {
                               width: MediaQuery.of(context).size.width,
                               child: const Icon(
                                 CupertinoIcons.check_mark,
-                                color: Colors.green,
+                                color: Colors.white,
                               ))),
                     )
                   ],
