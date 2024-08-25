@@ -121,15 +121,13 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
       }
       //! This is a bug.
       devtools.log("Updating an item..");
-      devtools.log(event.updatedTodo.runtimeType.toString()); // entity
-      devtools.log("Updating on");
-      devtools.log(state.todos.runtimeType.toString()); // model
-      List<TodoEntity> updatedTodos = List.from(state.todos);
-      updatedTodos[index] = event.updatedTodo;
+      // devtools.log(event.updatedTodo);
 
-      // state.todos[index] = event.updatedTodo;
-      emit(
-          state.copyWith(todos: updatedTodos, status: ChecklistStatus.success));
+      state.todos[index] = event.updatedTodo;
+      emit(state.copyWith(todos: state.todos, status: ChecklistStatus.success));
+
+      // temporary fix
+      // fetch all todo items after an update
     } catch (e) {
       devtools.log(e.toString());
       emit(state.copyWith(status: ChecklistStatus.error));
