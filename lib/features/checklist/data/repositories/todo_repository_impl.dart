@@ -34,7 +34,19 @@ class TodoRepositoryImpl implements TodoRepository {
   Future<Either<Failure, List<TodoEntity>>> getTodos() async {
     try {
       final todos = await localDb.getTodos();
-      return Right(todos);
+
+      // convert the right to a list of TodoEntity
+
+      final List<TodoEntity> todoList = todos.map((e) {
+        return TodoEntity(
+          id: e.id,
+          title: e.title,
+          description: e.description,
+          isDone: e.isDone,
+        );
+      }).toList();
+
+      return Right(todoList);
     } catch (e) {
       return Left(DatabaseFailure());
     }
@@ -58,7 +70,6 @@ class TodoRepositoryImpl implements TodoRepository {
       description: todo.description,
       isDone: todo.isDone,
     );
-    devtools.log("Model created");
 
     try {
       return Right(await localDb.updateTodo(id, todoModel));

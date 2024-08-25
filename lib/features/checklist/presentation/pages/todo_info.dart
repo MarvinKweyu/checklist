@@ -1,4 +1,4 @@
-import 'package:checklist/features/checklist/domain/entities/todo_entity.dart';
+import 'dart:async';
 import 'package:checklist/features/checklist/presentation/bloc/checklist_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,11 +17,14 @@ class _TodoInfoState extends State<TodoInfo> {
 
   TextEditingController titleController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+  Timer? _debounce;
+  bool _isUpdating = false;
 
   @override
   void dispose() {
     titleController.dispose();
     noteController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -65,97 +68,111 @@ class _TodoInfoState extends State<TodoInfo> {
                 .firstWhere((todo) => todo.id == int.parse(widget.id));
             titleController.text = todo.title;
             noteController.text = todo.description ?? '';
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                key: _formKey,
-                onChanged: () {
-                  devtools.log('Form Changed');
-                  // Todo: add debounce
+            return RepaintBoundary(
+              child: AnimatedOpacity(
+                opacity: _isUpdating ? 0.5 : 1.0,
+                duration: const Duration(milliseconds: 300),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Form(
+                    key: _formKey,
+                    onChanged: () {
+                      devtools.log('Form Changed');
 
-                  if (_formKey.currentState!.validate()) {
-                    context.read<ChecklistBloc>().add(
-                          UpdateTodo(
-                            int.parse(widget.id),
-                            todo.copyWith(
-                              title: titleController.text,
-                              description: noteController.text,
-                            ),
-                          ),
-                        );
-                  }
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
+                      if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                      _debounce = Timer(const Duration(milliseconds: 300), () {
+                        if (_formKey.currentState!.validate()) {
+                          _isUpdating = true;
+                          context.read<ChecklistBloc>().add(
+                                UpdateTodo(
+                                  int.parse(widget.id),
+                                  todo.copyWith(
+                                    title: titleController.text,
+                                    description: noteController.text,
+                                  ),
+                                ),
+                              );
+                          _isUpdating = false;
+                        }
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Checkbox(
-                            activeColor: Theme.of(context).colorScheme.primary,
-                            value: todo.isDone,
-                            onChanged: (value) {
-                              // mark the todo as done
+                        Row(
+                          children: [
+                            Checkbox(
+                                activeColor:
+                                    Theme.of(context).colorScheme.primary,
+                                value: todo.isDone,
+                                onChanged: (value) {
+                                  // mark the todo as done
 
-                              devtools.log(value.toString());
+                                  devtools.log(value.toString());
 
-                              context.read<ChecklistBloc>().add(
-                                    UpdateTodo(
-                                      int.parse(widget.id),
-                                      todo.copyWith(isDone: value),
+                                  context.read<ChecklistBloc>().add(
+                                        UpdateTodo(
+                                          int.parse(widget.id),
+                                          todo.copyWith(isDone: value),
+                                        ),
+                                      );
+                                  // take me back to home
+                                  Navigator.pop(context);
+                                }),
+                            Expanded(
+                              child: TextFormField(
+                                controller: titleController,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Title cannot be empty';
+                                  }
+                                  if (value.length > 50) {
+                                    return 'Too long!';
+                                  }
+                                  return null;
+                                },
+                                maxLength: 50,
+                                decoration: InputDecoration(
+                                  hintText: 'Add a title',
+                                  filled: true,
+                                  fillColor: Colors.grey[100],
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                      width: 0,
+                                      style: BorderStyle.none,
                                     ),
-                                  );
-                            }),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Expanded(
                           child: TextFormField(
-                            controller: titleController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Title cannot be empty';
-                              }
-                              if (value.length > 50) {
-                                return 'Too long!';
-                              }
-                              return null;
-                            },
-                            maxLength: 50,
+                            controller: noteController,
+                            maxLines: 10,
                             decoration: InputDecoration(
-                              hintText: 'Add a title',
+                              hintText: 'Add a note',
                               filled: true,
                               fillColor: Colors.grey[100],
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  width: 0,
-                                  style: BorderStyle.none,
-                                ),
-                              ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                    width: 0,
+                                    style: BorderStyle.none,
+                                  )),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: noteController,
-                        maxLines: 10,
-                        decoration: InputDecoration(
-                          hintText: 'Add a note',
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                width: 0,
-                                style: BorderStyle.none,
-                              )),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             );

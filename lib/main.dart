@@ -38,8 +38,19 @@ class MyApp extends StatelessWidget {
               onSurface: Colors.black,
               primary: Colors.green,
               onPrimary: Colors.black,
-              secondary: Color.fromARGB(255, 191, 165, 117),
-              onSecondary: Color.fromARGB(255, 191, 165, 117),
+              secondary: Color(0xFF81C784), // A softer green
+              onSecondary: Color(0xFF2E7D32),
+            ),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData(
+            colorScheme: const ColorScheme.dark(
+              surface: Color(0xFF303030),
+              onSurface: Colors.white,
+              primary: Color(0xFF388E3C),
+              onPrimary: Colors.white,
+              secondary: Color(0xFF66BB6A),
+              onSecondary: Color(0xFF004D40),
             ),
             useMaterial3: true,
           ),

@@ -19,6 +19,7 @@ class _HomeState extends State<Home> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
+  int currentPageIndex = 0;
 
   addTodo(TodoEntity todo) {
     // either way works
@@ -155,10 +156,16 @@ class _HomeState extends State<Home> {
         child: BlocBuilder<ChecklistBloc, ChecklistState>(
           builder: (context, state) {
             if (state.status == ChecklistStatus.success) {
+              devtools.log(currentPageIndex.toString());
               return ListView.builder(
-                  itemCount: state.incompleteTodos.length,
+                  itemCount: currentPageIndex == 0
+                      ? state.incompleteTodos.length
+                      : state.completedTodos.length,
                   itemBuilder: (context, int i) {
-                    TodoEntity singleItem = state.incompleteTodos[i];
+                    TodoEntity singleItem = currentPageIndex == 1
+                        ? state.completedTodos[i]
+                        : state.incompleteTodos[i];
+
                     return GestureDetector(
                       onTap: () {
                         context.go('/info/${singleItem.id}');
@@ -169,42 +176,50 @@ class _HomeState extends State<Home> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         child: Slidable(
-                            key: const ValueKey(0),
-                            startActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (_) {
-                                    removeTodo(singleItem);
-                                  },
-                                  backgroundColor: const Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Delete',
-                                ),
-                              ],
+                          key: const ValueKey(0),
+                          startActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (_) {
+                                  removeTodo(singleItem);
+                                },
+                                backgroundColor: const Color(0xFFFE4A49),
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                                label: 'Delete',
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              singleItem.title,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            child: ListTile(
-                                title: Text(
-                                  singleItem.title,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Text(singleItem.description ?? '',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                    )),
-                                trailing: Checkbox(
-                                    value: singleItem.isDone,
-                                    activeColor: Colors.white,
-                                    onChanged: (value) {
-                                      changeTodo(
-                                        singleItem.id!,
-                                        singleItem.copyWith(isDone: true),
-                                      );
-                                    }))),
+                            subtitle: Text(singleItem.description ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                )),
+                            trailing: Checkbox(
+                              value: singleItem.isDone,
+                              activeColor: Colors.white,
+                              onChanged: (value) {
+                                devtools.log('Current value of the checklist');
+                                bool updatedValue = value ?? false;
+                                devtools.log(updatedValue.toString());
+                                changeTodo(
+                                  singleItem.id!,
+                                  singleItem.copyWith(isDone: updatedValue),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
                     );
                   });
@@ -218,6 +233,30 @@ class _HomeState extends State<Home> {
             );
           },
         ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        indicatorColor: Colors.green,
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            selectedIcon: Icon(Icons.inbox),
+            icon: Icon(Icons.inbox_outlined),
+            label: 'inbox',
+          ),
+          // NavigationDestination(
+          //   icon: Badge(child: Icon(Icons.notifications_sharp)),
+          //   label: 'Notifications',
+          // ),
+          NavigationDestination(
+            icon: Icon(Icons.done),
+            label: 'Done',
+          ),
+        ],
       ),
     );
   }
